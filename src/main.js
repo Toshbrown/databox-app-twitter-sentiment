@@ -90,29 +90,46 @@ databox.waitForStoreStatus(DATABOX_STORE_BLOB_ENDPOINT,'active')
       var dataEmitter = null; 
 
       if(USER_TIMELINE_ENDPOINT !== '') {
+
+        var endpointUrl = url.parse(USER_TIMELINE_ENDPOINT);
+        var dsID = DATASOURCE_DS_twitterUserTimeLine['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasDatasourceid'; })[0].val;
+        var dsUrl = endpointUrl.protocol + '//' + endpointUrl.host;
+        var dsType = DATASOURCE_DS_twitterUserTimeLine['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasType';})[0].val;
+        databox.timeseries.latest(dsUrl, dsID)
+        .then((data)=>{
+            console.log(data);
+        })
+        .catch((err)=>{
+            console.log("[Error getting timeseries.latest]",dsUrl, dsID);
+        });
+
         databox.subscriptions.connect(USER_TIMELINE_ENDPOINT)
         .then((emitter)=>{
             dataEmitter = emitter;      
 
 
             var endpointUrl = url.parse(USER_TIMELINE_ENDPOINT);
-            var dsID = USER_TIMELINE_ENDPOINT['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasDatasourceid'; })[0].val;
+            var dsID = DATASOURCE_DS_twitterUserTimeLine['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasDatasourceid'; })[0].val;
             var dsUrl = endpointUrl.protocol + '//' + endpointUrl.host;
-            var dsType = USER_TIMELINE_ENDPOINT['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasType';})[0].val;
-            console.log("[subscribing]",datastoreUrl,dsID,dsType);
-            databox.subscriptions.subscribe(datastoreUrl,dsID,dsType)
+            var dsType = DATASOURCE_DS_twitterUserTimeLine['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasType';})[0].val;
+            console.log("[subscribing]",dsUrl,dsID,dsType);
+            databox.subscriptions.subscribe(dsUrl,dsID,dsType)
             .catch((err)=>{console.log("[ERROR subscribing]",err)});
 
             endpointUrl = url.parse(HASHTAG_ENDPOINT);
-            dsID = HASHTAG_ENDPOINT['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasDatasourceid'; })[0].val;
+            dsID = DATASOURCE_DS_twitterHashTagStream['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasDatasourceid'; })[0].val;
             dsUrl = endpointUrl.protocol + '//' + endpointUrl.host;
-            dsType = HASHTAG_ENDPOINT['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasType';})[0].val;
-            console.log("[subscribing]",datastoreUrl,dsID,dsType);
-            databox.subscriptions.subscribe(datastoreUrl,dsID,dsType)
+            dsType = DATASOURCE_DS_twitterHashTagStream['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasType';})[0].val;
+            console.log("[subscribing]",dsUrl,dsID,dsType);
+            databox.subscriptions.subscribe(dsUrl,dsID,dsType)
             .catch((err)=>{console.log("[ERROR subscribing]",err)});
 
             emitter.on('data',(hostname, dsID, data)=>{
                 console.log(hostname, dsID, data);
+            });
+
+            emitter.on('error',(error)=>{
+                console.log(error);
             });
 
         })
