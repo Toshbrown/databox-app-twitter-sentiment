@@ -1,3 +1,4 @@
+
 /*jshint esversion: 6 */
 var https = require('https');
 var express = require("express");
@@ -43,8 +44,8 @@ https.createServer(credentials, app).listen(8080);
 //
 // wait for our datastores to be ready
 //
-/*console.log("waiting for DATABOX_STORE_BLOB_ENDPOINT", DATABOX_STORE_BLOB_ENDPOINT),
-databox.waitForStoreStatus(DATABOX_STORE_BLOB_ENDPOINT,'active')
+console.log("waiting for DATABOX_STORE_BLOB_ENDPOINT", DATABOX_STORE_BLOB_ENDPOINT),
+/*databox.waitForStoreStatus(DATABOX_STORE_BLOB_ENDPOINT,'active')
   .then(() =>{
       
       console.log("waiting for USER_TIMELINE_ENDPOINT", USER_TIMELINE_ENDPOINT);
