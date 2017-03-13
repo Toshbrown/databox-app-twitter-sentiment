@@ -53,7 +53,7 @@ console.log("waiting for DATABOX_STORE_BLOB_ENDPOINT", DATABOX_STORE_BLOB_ENDPOI
       
   })*/
   new Promise((resolve,reject)=>{
-    setTimeout(resolve,1000);
+    setTimeout(resolve,10000);
   })
   .then(() =>{
 
