@@ -38,6 +38,11 @@ app.get("/status", function(req, res) {
     res.send(status);
 });
 
+var latestTweet = "{}";
+app.get("/ui", function(req, res) {
+    res.send("<h2>" + latestTweet.text + "</h2>");
+});
+
 //start the express server
 https.createServer(credentials, app).listen(8080);
 
@@ -99,6 +104,7 @@ console.log("waiting for DATABOX_STORE_BLOB_ENDPOINT", DATABOX_STORE_BLOB_ENDPOI
         databox.timeseries.latest(dsUrl, dsID)
         .then((data)=>{
             console.log(data);
+            latestTweet = data[0].data;
         })
         .catch((err)=>{
             console.log("[Error getting timeseries.latest]",dsUrl, dsID);
@@ -110,7 +116,7 @@ console.log("waiting for DATABOX_STORE_BLOB_ENDPOINT", DATABOX_STORE_BLOB_ENDPOI
 
 
             var endpointUrl = url.parse(USER_TIMELINE_ENDPOINT);
-            var dsID = DATASOURCE_DS_twitterUserTimeLine['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasDatasourceid'; })[0].val + '/ts';
+            var dsID = DATASOURCE_DS_twitterUserTimeLine['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasDatasourceid'; })[0].val;
             var dsUrl = endpointUrl.protocol + '//' + endpointUrl.host;
             console.log("[subscribing]",dsUrl,dsID);
             databox.subscriptions.subscribe(dsUrl,dsID,'ts')
@@ -125,6 +131,7 @@ console.log("waiting for DATABOX_STORE_BLOB_ENDPOINT", DATABOX_STORE_BLOB_ENDPOI
 
             dataEmitter.on('data',(hostname, dsID, data)=>{
                 console.log(hostname, dsID, data);
+                latestTweet = data;
             });
 
             dataEmitter.on('error',(error)=>{
