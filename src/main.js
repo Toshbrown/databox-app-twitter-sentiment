@@ -110,26 +110,24 @@ console.log("waiting for DATABOX_STORE_BLOB_ENDPOINT", DATABOX_STORE_BLOB_ENDPOI
 
 
             var endpointUrl = url.parse(USER_TIMELINE_ENDPOINT);
-            var dsID = DATASOURCE_DS_twitterUserTimeLine['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasDatasourceid'; })[0].val;
+            var dsID = DATASOURCE_DS_twitterUserTimeLine['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasDatasourceid'; })[0].val + '/ts';
             var dsUrl = endpointUrl.protocol + '//' + endpointUrl.host;
-            var dsType = DATASOURCE_DS_twitterUserTimeLine['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasType';})[0].val;
-            console.log("[subscribing]",dsUrl,dsID,dsType);
-            databox.subscriptions.subscribe(dsUrl,dsID,dsType)
+            console.log("[subscribing]",dsUrl,dsID);
+            databox.subscriptions.subscribe(dsUrl,dsID,'ts')
             .catch((err)=>{console.log("[ERROR subscribing]",err)});
 
             endpointUrl = url.parse(HASHTAG_ENDPOINT);
             dsID = DATASOURCE_DS_twitterHashTagStream['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasDatasourceid'; })[0].val;
             dsUrl = endpointUrl.protocol + '//' + endpointUrl.host;
-            dsType = DATASOURCE_DS_twitterHashTagStream['item-metadata'].filter((itm)=>{return itm.rel === 'urn:X-databox:rels:hasType';})[0].val;
-            console.log("[subscribing]",dsUrl,dsID,dsType);
-            databox.subscriptions.subscribe(dsUrl,dsID,dsType)
+            console.log("[subscribing]",dsUrl,dsID);
+            databox.subscriptions.subscribe(dsUrl,dsID,'ts')
             .catch((err)=>{console.log("[ERROR subscribing]",err)});
 
-            emitter.on('data',(hostname, dsID, data)=>{
+            dataEmitter.on('data',(hostname, dsID, data)=>{
                 console.log(hostname, dsID, data);
             });
 
-            emitter.on('error',(error)=>{
+            dataEmitter.on('error',(error)=>{
                 console.log(error);
             });
 
